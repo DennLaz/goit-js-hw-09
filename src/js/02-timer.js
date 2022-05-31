@@ -1,4 +1,5 @@
 import flatpickr from 'flatpickr';
+import { Notify } from 'notiflix/build/notiflix-notify-aio';
 import 'flatpickr/dist/flatpickr.min.css';
 
 const btnEl = document.querySelector('button');
@@ -12,10 +13,11 @@ const options = {
   minuteIncrement: 1,
   onClose(selectedDates) {
     if (selectedDates[0] < options.defaultDate) {
-      alert('"Please choose a date in the future"');
+      Notify.failure('Please choose a date in the future');
       btnEl.setAttribute('disabled', true);
     } else {
       btnEl.removeAttribute('disabled');
+      Notify.info('To start the timer, press the "Start" button!');
       DEDLINE_TIMER_TIME = selectedDates[0];
     }
   },
@@ -27,6 +29,7 @@ btnEl.addEventListener('click', onClickStartBtn);
 
 function onClickStartBtn() {
   start(selectorEl, DEDLINE_TIMER_TIME);
+  Notify.success('Timer started successfully!');
 }
 
 let intervalId = null;
