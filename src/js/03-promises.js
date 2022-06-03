@@ -12,17 +12,19 @@ let inputStepValue;
 function createPromise(position, delay) {
   return new Promise((resolve, reject) => {
     const shouldResolve = Math.random() > 0.3;
-    if (shouldResolve) {
-      resolve({
-        position: inputAmountValue,
-        delay: inputDelayValue,
-      });
-    } else {
-      reject({
-        position: inputAmountValue,
-        delay: inputDelayValue,
-      });
-    }
+    setTimeout(() => {
+      if (shouldResolve) {
+        resolve({
+          position,
+          delay,
+        });
+      } else {
+        reject({
+          position,
+          delay,
+        });
+      }
+    }, delay);
   });
 }
 
@@ -36,18 +38,12 @@ function onFormSubmite(e) {
   inputDelayValue = inputDelay.valueAsNumber;
 
   for (let i = 0; i < inputAmountValue; i += 1) {
-    setTimeout(() => {
-      createPromise(inputAmountValue, inputDelayValue)
-        .then(({ position, delay }) => {
-          position = i + 1;
-          delay = (inputDelayValue += inputStepValue) - inputStepValue;
-          Notify.success(`✅ Fulfilled promise ${position} in ${delay}ms`);
-        })
-        .catch(({ position, delay }) => {
-          position = i + 1;
-          delay = (inputDelayValue += inputStepValue) - inputStepValue;
-          Notify.failure(`❌ Rejected promise ${position} in ${delay}ms`);
-        });
-    }, inputDelayValue);
+    createPromise(i + 1, inputDelayValue + i * inputStepValue)
+      .then(({ position, delay }) => {
+        Notify.success(`✅ Fulfilled promise ${position} in ${delay}ms`);
+      })
+      .catch(({ position, delay }) => {
+        Notify.failure(`❌ Rejected promise ${position} in ${delay}ms`);
+      });
   }
 }
